@@ -1,0 +1,5 @@
+This keeps the infrastructure that builds docker images for [GraphDB|http://graphdb.ontotext.com/]
+
+Note that to use the docker images, you must get a license from us first.
+
+Currently there are no public images for GraphDB Free and you will have to build those if needed from the zip distribution that you get after registering on our website.
