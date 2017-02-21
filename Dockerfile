@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:8-jdk
 
 # Build time arguments
 ARG version=8.0.3
