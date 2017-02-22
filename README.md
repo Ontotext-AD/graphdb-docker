@@ -1,6 +1,6 @@
 This keeps the infrastructure that builds docker images for [GraphDB](http://graphdb.ontotext.com/)
 
-Check [Docker Hub Images](https://hub.docker.com/r/oracle/openjdk/) for information on how to use the images.
+Check [Docker Hub Images](https://hub.docker.com/r/ontotext/graphdb/) for information on how to use the images.
 
 Note that to use the docker images, you must get a license from us first.
 
