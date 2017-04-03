@@ -8,6 +8,31 @@ Currently there are no public images for GraphDB Free and you will have to
 build those if needed from the zip distribution that you get after registering
 on our website.
 
+# Building a docker image based on the free edition
+
+You will need docker and make installed on your machine.
+
+1. Checkout this repository
+1. Register on the Ontotext website for the GraphDB Free edition. Download the zip file and place it in the *free-edition* subdirectory
+1. Run
+```
+make free VERSION=<the-version-that-you-got>
+```
+
+for example the most recent version as of this writing is 8.0.6 so run
+```
+make free VERSION=8.0.6
+```
+
+this will build an image that you can use called ontotext/graphdb:8.0.6-free.
+You can run the image now with
+```
+docker run -d -p 7200:7200 graphdb-free
+```
+
+Consult the docker hub documentation for more information.
+
+
 # Issues
 
 You can report issues in the GitHub issue tracker or at graphdb-support at ontotext.com

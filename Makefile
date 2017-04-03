@@ -1,5 +1,8 @@
 VERSION=8.0.4
 
+free:
+	docker build --build-arg edition=free --build-arg version=${VERSION} -t ontotext/graphdb:${VERSION}-free free-edition
+
 ee:
 	docker build --build-arg edition=ee --build-arg version=${VERSION} -t ontotext/graphdb:${VERSION}-ee .
 
