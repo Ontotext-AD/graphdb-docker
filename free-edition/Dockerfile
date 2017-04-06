@@ -14,6 +14,7 @@ ADD graphdb-free-${version}-dist.zip /tmp
 RUN mkdir -p ${GRAPHDB_PARENT_DIR} && \
     cd ${GRAPHDB_PARENT_DIR} && \
     unzip /tmp/graphdb-free-${version}-dist.zip && \
+    rm /tmp/graphdb-free-${version}-dist.zip && \
     mv graphdb-${edition}-${version} dist && \
     mkdir -p ${GRAPHDB_HOME}
 
