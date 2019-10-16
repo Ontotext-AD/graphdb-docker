@@ -2,7 +2,7 @@ This keeps the infrastructure that builds docker images for [GraphDB](http://gra
 
 Check [Docker Hub Images](https://hub.docker.com/r/ontotext/graphdb/) for information on how to use the images.
 
-Note that to use the docker images, you must get a license from us first.
+Note that to use GraphDB EE or SE docker images, you must get a license from us first.
 
 Currently there are no public images for GraphDB Free and you will have to
 build those if needed from the zip distribution that you get after registering
