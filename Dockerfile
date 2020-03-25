@@ -1,7 +1,7 @@
-FROM openjdk:8-jdk
+FROM adoptopenjdk/openjdk11:alpine
 
 # Build time arguments
-ARG version=8.0.3
+ARG version=9.1.1
 ARG edition=ee
 
 ENV GRAPHDB_PARENT_DIR=/opt/graphdb
@@ -11,9 +11,10 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 WORKDIR /tmp
 
-RUN curl -fsSL "http://maven.ontotext.com/content/groups/all-onto/com/ontotext/graphdb/graphdb-${edition}/${version}/graphdb-${edition}-${version}-dist.zip" > \
+RUN apk add --no-cache unzip bash util-linux curl bind-tools procps net-tools busybox-extras wget curl zip screen vim less && \
+    curl -fsSL "http://maven.ontotext.com/content/groups/all-onto/com/ontotext/graphdb/graphdb-${edition}/${version}/graphdb-${edition}-${version}-dist.zip" > \
     graphdb-${edition}-${version}.zip && \
-    bash -c 'md5sum -c - <<<"$(curl -fsSL http://maven.ontotext.com/content/groups/all-onto/com/ontotext/graphdb/graphdb-${edition}/${version}/graphdb-${edition}-${version}-dist.zip.md5) graphdb-${edition}-${version}.zip"' && \
+    bash -c 'md5sum -c - <<<"$(curl -fsSL http://maven.ontotext.com/content/groups/all-onto/com/ontotext/graphdb/graphdb-${edition}/${version}/graphdb-${edition}-${version}-dist.zip.md5)  graphdb-${edition}-${version}.zip"' && \
     mkdir -p ${GRAPHDB_PARENT_DIR} && \
     cd ${GRAPHDB_PARENT_DIR} && \
     unzip /tmp/graphdb-${edition}-${version}.zip && \

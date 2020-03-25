@@ -1,7 +1,7 @@
-FROM openjdk:8-jdk
+FROM adoptopenjdk/openjdk11:alpine
 
 # Build time arguments
-ARG version=8.0.3
+ARG version=9.1.1
 ARG edition=free
 
 ENV GRAPHDB_PARENT_DIR=/opt/graphdb
@@ -11,7 +11,8 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 ADD graphdb-free-${version}-dist.zip /tmp
 
-RUN mkdir -p ${GRAPHDB_PARENT_DIR} && \
+RUN apk add --no-cache unzip bash util-linux curl bind-tools procps net-tools busybox-extras wget curl zip screen vim less && \
+    mkdir -p ${GRAPHDB_PARENT_DIR} && \
     cd ${GRAPHDB_PARENT_DIR} && \
     unzip /tmp/graphdb-free-${version}-dist.zip && \
     rm /tmp/graphdb-free-${version}-dist.zip && \
