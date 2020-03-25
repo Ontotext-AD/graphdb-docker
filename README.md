@@ -63,4 +63,4 @@ for the enterprise edition and
 make se VERSION=<version-of-graphdb-you-want>
 ```
 
-for the standard edition
+for the standard edition.
