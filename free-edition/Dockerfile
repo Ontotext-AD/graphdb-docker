@@ -11,7 +11,7 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 ADD graphdb-free-${version}-dist.zip /tmp
 
-RUN apk add --no-cache unzip bash util-linux curl bind-tools procps net-tools busybox-extras wget curl zip screen vim less && \
+RUN apk add --no-cache bash util-linux procps net-tools busybox-extras wget less && \
     mkdir -p ${GRAPHDB_PARENT_DIR} && \
     cd ${GRAPHDB_PARENT_DIR} && \
     unzip /tmp/graphdb-free-${version}-dist.zip && \
