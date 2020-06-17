@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  graphdb:
+    container_name: graphdb
+    # image: ontotext/graphdb:9.3.0-ee
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        version: 9.3.0
+    restart: unless-stopped
+    command: [ "-Dgraphdb.home=/opt/graphdb/home", "-Dgraphdb.workbench.cors.enable=true" ]
+    environment: 
+      - GDB_HEAP_SIZE=4G
+    ports: 
+      - 7200:7200
+    volumes:
+      - ./graphdb-home:/opt/graphdb/home
+      - ./preload/import:/root/graphdb-import

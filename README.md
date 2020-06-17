@@ -32,6 +32,58 @@ docker run -d -p 7200:7200 graphdb-free
 
 Consult the docker hub documentation for more information.
 
+# Preload and start GraphDB with docker-compose
+
+Docker compose files to deploy GraphDB available in the `free-edition` folder. You can directly use DOckerHub images by editing the docker-compose.yaml files:
+
+* Uncomment `image: ontotext/graphdb:9.3.0-ee`
+* Comment or remove the `build` object.
+
+### Preload a repository
+
+Go to the `preload` subfolder to run the GraphDB preload
+
+```bash
+cd preload
+```
+
+By default it will:
+
+* Create or override a repository defined in the `graphdb-repo-config.ttl` file (can be changed manually)
+* Upload a test ntriple file in the `graphdb-preload/import` subfolder.
+
+> See the [GraphDB preload documentation](http://graphdb.ontotext.com/documentation/free/loading-data-using-preload.html) for more details.
+
+When running the preload docker-compose different parameters can be changed in the `preload/.env` file:
+
+```bash
+GRAPHDB_VERSION=9.3.0
+GRAPHDB_HEAP_SIZE=2G
+IMPORT_FOLDER=./import
+REPOSITORY_CONFIG_FILE=./graphdb-repo-config.ttl
+```
+
+Build and run:
+
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+> GraphDB data will go to `/data/graphdb`
+
+### Start GraphDB
+
+To start GraphDB run the following **from the root of the git repository**:
+
+```bash
+docker-compose up -d
+```
+
+> It will use the repo created by the preload in `/data/graphdb/data`
+
+> Feel free to add a `.env` file similar to the preload repository to define variables.
+
 
 # Issues
 
