@@ -29,5 +29,6 @@ services:
         -Dreuse.vars.in.subselects=true
     volumes:
       # Change folders in the .env file or directly here
+      - ${GRAPHDB_HOME}:/opt/graphdb/home
       - ${IMPORT_FOLDER}:/opt/graphdb/home/graphdb-import
       - ${REPOSITORY_CONFIG_FILE}:/opt/graphdb/graphdb-repo-config.ttl
