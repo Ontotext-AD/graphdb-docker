@@ -20,8 +20,7 @@ RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras wget
     unzip /tmp/graphdb-${edition}-${version}.zip && \
     rm /tmp/graphdb-${edition}-${version}.zip && \
     mv graphdb-${edition}-${version} dist && \
-    mkdir -p ${GRAPHDB_HOME} && \
-    apk del curl
+    mkdir -p ${GRAPHDB_HOME}
 
 ENV PATH=${GRAPHDB_INSTALL_DIR}/bin:$PATH
 
