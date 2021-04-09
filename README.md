@@ -17,16 +17,16 @@ You will need docker and make installed on your machine.
 make free VERSION=<the-version-that-you-got>
 ```
 
-for example the most recent version as of this writing is 9.3.0 so run
+for example the most recent version as of this writing is 9.7.0 so run
 ```bash
-make free VERSION=9.3.0
+make free VERSION=9.7.0
 ```
 
-this will build an image that you can use called ontotext/graphdb:9.3.0-free.
+this will build an image that you can use called ontotext/graphdb:9.7.0-free.
 You can run the image now with
 
 ```bash
-docker run -d -p 7200:7200 graphdb-free
+docker run -d -p 7200:7200 ontotext/graphdb:9.7.0-free
 ```
 
 Consult the docker hub documentation for more information.
