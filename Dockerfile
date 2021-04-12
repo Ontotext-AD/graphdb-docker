@@ -11,7 +11,7 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 WORKDIR /tmp
 
-RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras wget less && \
+RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras=1.31.1-r20 wget less && \
     curl -fsSL "http://maven.ontotext.com/content/groups/all-onto/com/ontotext/graphdb/graphdb-${edition}/${version}/graphdb-${edition}-${version}-dist.zip" > \
     graphdb-${edition}-${version}.zip && \
     bash -c 'md5sum -c - <<<"$(curl -fsSL http://maven.ontotext.com/content/groups/all-onto/com/ontotext/graphdb/graphdb-${edition}/${version}/graphdb-${edition}-${version}-dist.zip.md5)  graphdb-${edition}-${version}.zip"' && \
