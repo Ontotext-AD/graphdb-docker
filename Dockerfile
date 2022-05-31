@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:alpine
+FROM eclipse-temurin:11-jdk-alpine
 
 # Build time arguments
 ARG version=10.0.0-M1
