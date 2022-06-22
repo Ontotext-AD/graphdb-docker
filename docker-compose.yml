@@ -3,12 +3,12 @@ version: "3"
 services:
   graphdb:
     container_name: graphdb
-    # image: ontotext/graphdb:9.3.0-ee
+    # image: ontotext/graphdb:9.11.2-ee
     build:
       context: ./free-edition
       dockerfile: Dockerfile
       args:
-        version: 9.3.0
+        version: 9.11.2
     restart: unless-stopped
     environment: 
       GDB_JAVA_OPTS: >-

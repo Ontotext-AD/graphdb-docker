@@ -1,4 +1,4 @@
-VERSION=9.1.1
+VERSION=9.11.2
 
 free:
 	docker build --no-cache --pull --build-arg edition=free --build-arg version=${VERSION} -t ontotext/graphdb:${VERSION}-free free-edition
