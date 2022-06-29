@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        version: 10.0.0-M1
+        version: 10.0.0
     restart: unless-stopped
     environment: 
       GDB_JAVA_OPTS: >-
@@ -22,6 +22,7 @@ services:
         -Dreuse.vars.in.subselects=true
     ports: 
       - 7200:7200
+      - 7300:7300
     volumes:
       - ./graphdb-data:/opt/graphdb/home
 
