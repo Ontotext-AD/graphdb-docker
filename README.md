@@ -14,14 +14,14 @@ make build-image VERSION=<the-version-that-you-want>
 
 for example the most recent version as of this writing is 10.0.0-M1 so run
 ```bash
-make build-imae VERSION=10.0.0-M1
+make build-image VERSION=10.0.0
 ```
 
 this will build an image that you can use called ontotext/graphdb:10.0.0-M1
 You can run the image now with
 
 ```bash
-docker run -d -p 7200:7200 ontotext/graphdb:10.0.0-M1
+docker run -d -p 7200:7200 ontotext/graphdb:10.0.0
 ```
 
 Consult the docker hub documentation for more information.
