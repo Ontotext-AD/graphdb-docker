@@ -3,12 +3,11 @@ version: "3"
 services:
   graphdb:
     container_name: graphdb
-    # image: ontotext/graphdb:9.3.0-ee
     build:
-      context: ./free-edition
+      context: .
       dockerfile: Dockerfile
       args:
-        version: 9.3.0
+        version: 10.0.0
     restart: unless-stopped
     environment: 
       GDB_JAVA_OPTS: >-
@@ -23,6 +22,7 @@ services:
         -Dreuse.vars.in.subselects=true
     ports: 
       - 7200:7200
+      - 7300:7300
     volumes:
       - ./graphdb-data:/opt/graphdb/home
 
