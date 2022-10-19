@@ -1,4 +1,4 @@
-VERSION=10.0.0
+VERSION=10.0.2
 
 build-image:
 	docker build --no-cache --pull --build-arg version=${VERSION} -t ontotext/graphdb:${VERSION} .

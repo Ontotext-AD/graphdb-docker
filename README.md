@@ -12,16 +12,16 @@ You will need docker and make installed on your machine.
 make build-image VERSION=<the-version-that-you-want>
 ```
 
-for example the most recent version as of this writing is 10.0.0 so run
+for example the most recent version as of this writing is 10.0.2 so run
 ```bash
-make build-image VERSION=10.0.0
+make build-image VERSION=10.0.2
 ```
 
-this will build an image that you can use called ontotext/graphdb:10.0.0
+this will build an image that you can use called ontotext/graphdb:10.0.2
 You can run the image now with
 
 ```bash
-docker run -d -p 7200:7200 ontotext/graphdb:10.0.0
+docker run -d -p 7200:7200 ontotext/graphdb:10.0.2
 ```
 
 Consult the docker hub documentation for more information.
@@ -44,7 +44,7 @@ By default it will:
 When running the preload docker-compose various parameters can be provided in the `preload/.env` file:
 
 ```bash
-GRAPHDB_VERSION=10.0.0
+GRAPHDB_VERSION=10.0.2
 GRAPHDB_HEAP_SIZE=2g
 GRAPHDB_HOME=../graphdb-data
 REPOSITORY_CONFIG_FILE=./graphdb-repo.ttl
