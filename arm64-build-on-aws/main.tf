@@ -7,7 +7,7 @@ variable "machine_type" {
 
 variable "os_image" {
   type = string
-  description = "The OS image to be used, ami id, like ami-035966e8adab4aaad, by default Ubuntu 18.04 is used"
+  description = "The OS image to be used, ami id, like ami-035966e8adab4aaad, by default Amazon Linux is used"
   default = "ami-006c19cfa0e8f4672"
 }
 
