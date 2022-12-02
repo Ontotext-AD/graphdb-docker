@@ -4,7 +4,9 @@
 sleep 10
 #create the test data dir and mount the attached hdd
 sudo mkdir /opt/temp-test-data
+sudo yum update -y;
 sudo amazon-linux-extras enable docker;
+sudo yum install -y docker git;
 sudo service docker start;
 sudo docker ps;
 sudo usermod -aG docker `echo $USER`;
