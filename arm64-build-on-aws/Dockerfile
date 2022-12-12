@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jdk-alpine
+FROM eclipse-temurin:11-jdk
 
 # Build time arguments
 ARG version=10.0.0
@@ -10,7 +10,8 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 WORKDIR /tmp
 
-RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras wget less libc6-compat && \
+RUN apt update && \
+    apt install -y bash curl util-linux wget zip  && \
     curl -fsSL "https://maven.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip" > \
     graphdb-${version}.zip && \
     bash -c 'md5sum -c - <<<"$(curl -fsSL https://maven.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip.md5)  graphdb-${version}.zip"' && \
@@ -20,7 +21,7 @@ RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras wget
     rm /tmp/graphdb-${version}.zip && \
     mv graphdb-${version} dist && \
     mkdir -p ${GRAPHDB_HOME} && \
-    ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
+    apt clean
 
 ENV PATH=${GRAPHDB_INSTALL_DIR}/bin:$PATH
 
