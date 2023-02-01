@@ -7,8 +7,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        version: 10.0.0
+        version: ${GRAPHDB_VERSION-10.0.0}
     restart: unless-stopped
+    platform: linux/amd64
     environment: 
       GDB_JAVA_OPTS: >-
         -Xmx2g -Xms2g

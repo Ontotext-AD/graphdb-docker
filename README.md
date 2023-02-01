@@ -26,6 +26,17 @@ docker run -d -p 7200:7200 ontotext/graphdb:10.0.0
 
 Consult the docker hub documentation for more information.
 
+### Using docker compose
+
+```bash
+docker compose build
+```
+
+You can also specify the version of GraphDB you want to use with the `GRAPHDB_VERSION` [environment variable](https://docs.docker.com/compose/environment-variables/set-environment-variables/):
+```bash
+GRAPHDB_VERSION=10.1.3 docker compose build
+```
+
 ### Preload a repository
 
 Go to the `preload` folder to run the bulk load data when GraphDB is stopped.
@@ -76,6 +87,8 @@ docker-compose up -d
 > It will use the repo created by the preload in `graphdb-data/`
 
 > Feel free to add a `.env` file similar to the preload repository to define variables.
+
+Open GraphDB Workbench in your browser at `http://localhost:7200/`.
 
 
 # Issues
