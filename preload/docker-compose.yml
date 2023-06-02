@@ -11,7 +11,7 @@ services:
         version: ${GRAPHDB_VERSION}
 
     # Load all files from ../import in repo defined in ./graphdb-repo-config.ttl
-    entrypoint: [ "/opt/graphdb/dist/bin/importrdf", "preload", "--force", "--recursive", "-q", "/tmp", "-c", "/opt/graphdb/graphdb-repo-config.ttl", "/opt/graphdb/home/graphdb-import" ]
+    entrypoint: [ "/opt/graphdb/dist/bin/importrdf", "preload", "--recursive", "-q", "/tmp", "-c", "/opt/graphdb/graphdb-repo-config.ttl", "/opt/graphdb/home/graphdb-import" ]
 
     # Preload given file to existing repository (here "demo")
     # entrypoint: [ "/opt/graphdb/dist/bin/preload", "-f", "-i", "demo", "/root/graphdb-import" ]
