@@ -12,16 +12,16 @@ You will need docker and make installed on your machine.
 make build-image VERSION=<the-version-that-you-want>
 ```
 
-for example the most recent version as of this writing is 10.0.0 so run
+for example the most recent version as of this writing is 10.2.2 so run
 ```bash
-make build-image VERSION=10.0.0
+make build-image VERSION=10.2.2
 ```
 
-this will build an image that you can use called ontotext/graphdb:10.0.0
+this will build an image that you can use called ontotext/graphdb:10.2.2
 You can run the image now with
 
 ```bash
-docker run -d -p 7200:7200 ontotext/graphdb:10.0.0
+docker run -d -p 7200:7200 ontotext/graphdb:10.2.2
 ```
 
 Consult the docker hub documentation for more information.
@@ -39,13 +39,13 @@ By default it will:
 * Create or override a repository defined in the `graphdb-repo-config.ttl` file (can be changed manually in the file, default is `demo`)
 * Upload a test ntriple file from the `preload/import` subfolder.
 
-> See the [GraphDB preload documentation](http://graphdb.ontotext.com/documentation/free/loading-data-using-preload.html) for more details.
+> See the [GraphDB preload documentation](https://graphdb.ontotext.com/documentation/10.2/loading-data-using-importrdf.html) for more details.
 
 When running the preload docker-compose various parameters can be provided in the `preload/.env` file:
 
 ```bash
-GRAPHDB_VERSION=10.0.0
-GRAPHDB_HEAP_SIZE=2g
+GRAPHDB_VERSION=10.2.2
+GRAPHDB_HEAP_SIZE=3g
 GRAPHDB_HOME=../graphdb-data
 REPOSITORY_CONFIG_FILE=./graphdb-repo.ttl
 ```
@@ -70,7 +70,7 @@ cd ..
 To start GraphDB run the following **from the root of the git repository**:
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 > It will use the repo created by the preload in `graphdb-data/`
