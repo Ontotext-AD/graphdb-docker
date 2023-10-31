@@ -77,11 +77,26 @@ docker-compose up -d --build
 
 > Feel free to add a `.env` file similar to the preload repository to define variables.
 
+### Start the external proxy
+
+To start the external proxy:
+
+- Navigate to the `bin` directory **from the root folder of the GraphDB directory**
+- Execute the `cluster-proxy` script located in the `bin` directory
+- Provide the cluster secret
+- Provide a GraphDB server HTTP or RPC address to at least one of the nodes in the cluster. You can provide either the HTTP or the RPC address of the node -- they are interchangeable. For example:
+
+```
+./bin/cluster-proxy -g http://graphdb1.example.com:7200,http://graphdb2.example.com:7200
+```
+
+A console message will inform you that GraphDB has been started in proxy mode. 
+
+> See the [GraphDB external proxy documentation](https://graphdb.ontotext.com/documentation/10.4/creating-a-cluster.html?highlight=proxy#start-the-external-proxy) for more details.
 
 # Issues
 
 You can report issues in the GitHub issue tracker or at graphdb-support at ontotext.com
-
 
 # Contributing
 
