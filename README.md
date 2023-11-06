@@ -77,22 +77,34 @@ docker-compose up -d --build
 
 > Feel free to add a `.env` file similar to the preload repository to define variables.
 
-### Start the external proxy
+## Cluster mode
 
-To start the external proxy:
+If you want to run GraphDB in cluster mode, there are a few additional things to consider.
 
-- Navigate to the `bin` directory **from the root folder of the GraphDB directory**
-- Execute the `cluster-proxy` script located in the `bin` directory
-- Provide the cluster secret
-- Provide a GraphDB server HTTP or RPC address to at least one of the nodes in the cluster. You can provide either the HTTP or the RPC address of the node -- they are interchangeable. For example:
+- Port `7300` (the default RPC port) should be exposed
+- A cluster secret must be provided for all cluster nodes with the property `graphdb.auth.token.secret`
 
+An example command for a GraphDB node ready for cluster mode:
+
+```bash
+docker run -d -p 7200:7200 -p 7300:7300 ontotext/graphdb:10.2.2 /opt/graphdb/dist/bin/graphdb -Dgraphdb.auth.token.secret=superSecretToken
 ```
-./bin/cluster-proxy -g http://graphdb1.example.com:7200,http://graphdb2.example.com:7200
+
+If you wish to use an `external proxy` with the cluster, you can launch it using Docker with the following command:
+
+```bash
+docker run -d -p 7200:7200 -p 7300:7300 --entrypoint /opt/graphdb/dist/bin/cluster-proxy ontotext/graphdb:10.2.2 -Dgraphdb.auth.token.secret=superSecretToken -g http://<hostname>:7200
 ```
 
-A console message will inform you that GraphDB has been started in proxy mode. 
+Notice that:
 
-> See the [GraphDB external proxy documentation](https://graphdb.ontotext.com/documentation/10.4/creating-a-cluster.html?highlight=proxy#start-the-external-proxy) for more details.
+- The entrypoint has been overridden to execute the `cluster-proxy` script in `/opt/graphdb/dish/bin` which is used to start the external proxy mode
+- The `-g` parameter tells the external proxy where it can find a GraphDB instance that is part of a cluster. One instance address is enough, the other cluster nodes will be discovered automatically.
+- The external proxy still needs a `graphdb.auth.token.secret` in order to communicate with the cluster
+
+The logs of the running container will inform you that GraphDB has been started in proxy mode and if it can communicate with the cluster nodes successfully
+
+> See the [GraphDB external proxy documentation](https://graphdb.ontotext.com/documentation/10.4/creating-a-cluster.html?start-the-external-proxy#configure-external-cluster-proxy) for more details.
 
 # Issues
 
