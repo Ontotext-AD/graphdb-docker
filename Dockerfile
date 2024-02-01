@@ -10,7 +10,7 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 WORKDIR /tmp
 
-RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras wget less libc6-compat && \
+RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras wget less gcompat && \
     apk upgrade libssl3 libcrypto3 && \
     curl -fsSL "https://maven.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip" > \
     graphdb-${version}.zip && \
@@ -20,8 +20,7 @@ RUN apk add --no-cache bash curl util-linux procps net-tools busybox-extras wget
     unzip /tmp/graphdb-${version}.zip && \
     rm /tmp/graphdb-${version}.zip && \
     mv graphdb-${version} dist && \
-    mkdir -p ${GRAPHDB_HOME} && \
-    ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
+    mkdir -p ${GRAPHDB_HOME}
 
 ENV PATH=${GRAPHDB_INSTALL_DIR}/bin:$PATH
 
