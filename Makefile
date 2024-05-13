@@ -1,11 +1,17 @@
-VERSION=10.2.2
+VERSION =
+ARCH =
+TAG = ontotext/graphdb:${VERSION}
 
-build-image:
-	docker build --no-cache --pull --build-arg version=${VERSION} -t ontotext/graphdb:${VERSION}-amd64 .
+check-env:
+ifndef VERSION
+	$(error VERSION is undefined)
+endif
+ifdef ARCH
+TAG := ${TAG}-${ARCH}
+endif
 
-build-image-arm64:
-	docker build --no-cache --pull --build-arg version=${VERSION} -t ontotext/graphdb:${VERSION}-arm64 arm64-build-on-aws
+build: check-env
+	docker image build --pull --build-arg version=${VERSION} -t ${TAG} .
 
-push:
-	docker push ontotext/graphdb:${VERSION}
-
+push: check-env
+	docker push ${TAG}
