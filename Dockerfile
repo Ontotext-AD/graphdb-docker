@@ -12,16 +12,16 @@ WORKDIR /tmp
 
 RUN <<EOF
 	apt-get update
-    apt-get install -y net-tools less unzip
-    curl -fsSL "${download_url}" > graphdb-${version}.zip
-    bash -c 'md5sum -c - <<<"$(curl -fsSL ${download_url_checksum})  graphdb-${version}.zip"'
-    mkdir -p ${GRAPHDB_PARENT_DIR}
-    cd ${GRAPHDB_PARENT_DIR}
-    unzip /tmp/graphdb-${version}.zip
-    rm /tmp/graphdb-${version}.zip
-    mv graphdb-${version} dist
-    mkdir -p ${GRAPHDB_HOME}
-    apt-get clean
+	apt-get install -y net-tools less unzip
+	curl -fsSL "${download_url}" > graphdb-${version}.zip
+	bash -c 'md5sum -c - <<<"$(curl -fsSL ${download_url_checksum})  graphdb-${version}.zip"'
+	mkdir -p ${GRAPHDB_PARENT_DIR}
+	cd ${GRAPHDB_PARENT_DIR}
+	unzip /tmp/graphdb-${version}.zip
+	rm /tmp/graphdb-${version}.zip
+	mv graphdb-${version} dist
+	mkdir -p ${GRAPHDB_HOME}
+	apt-get clean
 EOF
 
 ENV PATH=${GRAPHDB_INSTALL_DIR}/bin:$PATH
