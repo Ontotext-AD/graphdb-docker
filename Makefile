@@ -1,6 +1,7 @@
 VERSION =
 ARCH =
 TAG = ontotext/graphdb:${VERSION}
+DOCKERFILE_BASE = "https://raw.githubusercontent.com/adoptium/containers/057e5aa7581e96b8a2334290e750b329d62abfdf/11/jdk/ubuntu/jammy/Dockerfile"
 
 check-env:
 ifndef VERSION
@@ -10,8 +11,14 @@ ifdef ARCH
 TAG := ${TAG}-${ARCH}
 endif
 
-build: check-env
-	docker image build --pull --build-arg version=${VERSION} -t ${TAG} .
+temurin:
+	curl ${DOCKERFILE_BASE} > Dockerfile.base
+	sed -i '/^COPY/d;/^ENTRYPOINT/d' Dockerfile.base
+	sed -i 's/FROM ubuntu:22.04/FROM ubuntu:24.04/' Dockerfile.base
+	docker image build --pull --file Dockerfile.base --tag eclipse-temurin:11-jdk-noble .
+
+build: check-env temurin
+	docker image build --build-arg version=${VERSION} -t ${TAG} .
 
 push: check-env
 	docker push ${TAG}

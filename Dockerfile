@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jdk
+FROM eclipse-temurin:11-jdk-noble
 
 ARG version
 ARG download_url="https://maven.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip"
@@ -10,17 +10,19 @@ ENV GRAPHDB_INSTALL_DIR=${GRAPHDB_PARENT_DIR}/dist
 
 WORKDIR /tmp
 
-RUN apt-get update && \
-    apt-get install -y net-tools less unzip && \
-    curl -fsSL "${download_url}" > graphdb-${version}.zip && \
-    bash -c 'md5sum -c - <<<"$(curl -fsSL ${download_url_checksum})  graphdb-${version}.zip"' && \
-    mkdir -p ${GRAPHDB_PARENT_DIR} && \
-    cd ${GRAPHDB_PARENT_DIR} && \
-    unzip /tmp/graphdb-${version}.zip && \
-    rm /tmp/graphdb-${version}.zip && \
-    mv graphdb-${version} dist && \
-    mkdir -p ${GRAPHDB_HOME} && \
+RUN <<EOF
+	apt-get update
+    apt-get install -y net-tools less unzip
+    curl -fsSL "${download_url}" > graphdb-${version}.zip
+    bash -c 'md5sum -c - <<<"$(curl -fsSL ${download_url_checksum})  graphdb-${version}.zip"'
+    mkdir -p ${GRAPHDB_PARENT_DIR}
+    cd ${GRAPHDB_PARENT_DIR}
+    unzip /tmp/graphdb-${version}.zip
+    rm /tmp/graphdb-${version}.zip
+    mv graphdb-${version} dist
+    mkdir -p ${GRAPHDB_HOME}
     apt-get clean
+EOF
 
 ENV PATH=${GRAPHDB_INSTALL_DIR}/bin:$PATH
 
