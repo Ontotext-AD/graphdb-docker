@@ -13,7 +13,9 @@ endif
 
 temurin:
 	curl ${DOCKERFILE_BASE} > Dockerfile.base
+	# remove copy of entrypoint since we don't have it locally and we don't need it
 	sed -i '/^COPY/d;/^ENTRYPOINT/d' Dockerfile.base
+	# change the base image to noble
 	sed -i 's/FROM ubuntu:22.04/FROM ubuntu:24.04/' Dockerfile.base
 	docker image build --pull --file Dockerfile.base --tag eclipse-temurin:11-jdk-noble .
 
