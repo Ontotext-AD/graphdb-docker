@@ -1,1 +1,2 @@
-/graphdb-data
+.idea/
+Dockerfile.base
