@@ -1,4 +1,4 @@
-VERSION=10.2.2
+VERSION=10.7.1
 
 build-image:
 	docker build --no-cache --pull --build-arg version=${VERSION} -t ontotext/graphdb:${VERSION}-amd64 .

@@ -12,21 +12,23 @@ You will need docker and make installed on your machine.
 make build-image VERSION=<the-version-that-you-want>
 ```
 
-for example the most recent version as of this writing is 10.2.2 so run
+for example the most recent version as of this writing is 10.7.1 so run
 ```bash
-make build-image VERSION=10.2.2
+make build-image VERSION=10.7.1
 ```
 
-this will build an image that you can use called ontotext/graphdb:10.2.2
+this will build an image that you can use called ontotext/graphdb:10.7.1
 You can run the image now with
 
 ```bash
-docker run -d -p 7200:7200 ontotext/graphdb:10.2.2
+docker run -d -p 7200:7200 ontotext/graphdb:10.7.1
 ```
 
 Consult the docker hub documentation for more information.
 
-### Preload a repository
+### Using docker-compose 
+
+#### Preload a repository using preload tool (optional)
 
 Go to the `preload` folder to run the bulk load data when GraphDB is stopped.
 
@@ -39,12 +41,12 @@ By default it will:
 * Create or override a repository defined in the `graphdb-repo-config.ttl` file (can be changed manually in the file, default is `demo`)
 * Upload a test ntriple file from the `preload/import` subfolder.
 
-> See the [GraphDB preload documentation](https://graphdb.ontotext.com/documentation/10.2/loading-data-using-importrdf.html) for more details.
+> See the [GraphDB preload documentation](https://graphdb.ontotext.com/documentation/10.7/loading-data-using-importrdf.html) for more details.
 
 When running the preload docker-compose various parameters can be provided in the `preload/.env` file:
 
 ```bash
-GRAPHDB_VERSION=10.2.2
+GRAPHDB_VERSION=10.7.1
 GRAPHDB_HEAP_SIZE=3g
 GRAPHDB_HOME=../graphdb-data
 REPOSITORY_CONFIG_FILE=./graphdb-repo.ttl
@@ -57,7 +59,7 @@ docker-compose build
 docker-compose up -d
 ```
 
-> GraphDB data will go to `/data/graphdb`
+At this point the preload tool has preloaded the provided data in ``../graphdb-data``.
 
 Go back to the root of the git repository to start GraphDB:
 
@@ -65,7 +67,7 @@ Go back to the root of the git repository to start GraphDB:
 cd ..
 ```
 
-### Start GraphDB
+## Start GraphDB
 
 To start GraphDB run the following **from the root of the git repository**:
 
