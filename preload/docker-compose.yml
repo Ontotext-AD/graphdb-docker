@@ -21,12 +21,6 @@ services:
         -Xmx${GRAPHDB_HEAP_SIZE} -Xms${GRAPHDB_HEAP_SIZE}
         -Dgraphdb.home=/opt/graphdb/home
         -Dgraphdb.workbench.importDirectory=/opt/graphdb/home/graphdb-import
-        -Dgraphdb.workbench.cors.enable=true
-        -Denable-context-index=true
-        -Dentity-pool-implementation=transactional
-        -Dhealth.max.query.time.seconds=60
-        -Dgraphdb.append.request.id.headers=true
-        -Dreuse.vars.in.subselects=true
     volumes:
       # Change folders in the .env file or directly here
       - ${GRAPHDB_HOME}:/opt/graphdb/home
