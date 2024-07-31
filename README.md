@@ -26,6 +26,19 @@ docker run -d -p 7200:7200 ontotext/graphdb:10.7.1
 
 Consult the docker hub documentation for more information.
 
+#### Preload a repository using preload tool (optional)
+
+You can preload some data using the 'preload' tool. This tool and other command line tools (https://graphdb.ontotext.com/documentation/10.7/command-line-tools.html) can be used only when GraphDB is stopped.
+In order to use one of them in docker, stop your current GraphDB instance.
+
+Mount a folder that you would like to use as a GraphDB home folder, using `-v` option, as well as the data that you would like to preload. As GraphDB's docker image endpoint by default is GraphDB's application it has to be overridden like so:
+
+```bash
+docker run -v ./graphdb-data:/opt/graphdb/home -v ./preload:/opt/graphdb-import --entrypoint /opt/graphdb/dist/bin/importrdf ontotext/graphdb:10.7.1 -Dgraphdb.home=/opt/graphdb/home preload --force --recursive -q /tmp -c /opt/graphdb-import/graphdb-repo.ttl /opt/graphdb-import/import
+```
+
+This will run the preload tool, create a repository and import the data from `./preload/import`. After that, the same folder `./graphdb-data` can be mounted in a container and used as a GraphDB's home folder.
+
 ### Using docker-compose 
 
 #### Preload a repository using preload tool (optional)
