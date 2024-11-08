@@ -1,111 +1,113 @@
-This keeps the infrastructure that builds docker images for [GraphDB](http://graphdb.ontotext.com/)
+# Building
 
-Check [Docker Hub Images](https://hub.docker.com/r/ontotext/graphdb/) for information on how to use the images.
+[Ontotext](https://www.ontotext.com/) provides prebuild images with every release of GraphDB. These images are available
+at [Docker Hub](https://hub.docker.com/r/ontotext/graphdb/).
 
-# Building a docker image
+If you want to make changes to the image you can build it from this repository.
+To build the image you can use the provided [Makefile](./Makefile) or simply invoke the `docker image build` command
+directly. Note that there is a `version` build argument that must be provided. When using `make` this parameter will
+automatically be picked up from the `VERSION` variable.
 
-You will need docker and make installed on your machine.
-
-1. Checkout this repository
-1. Run
-```bash
-make build-image VERSION=<the-version-that-you-want>
+For example, if you want to build version `10.7.0`, you can run the following command:
+```shell
+make build VERSION="10.7.0"
 ```
 
-for example the most recent version as of this writing is 10.7.1 so run
-```bash
-make build-image VERSION=10.7.1
+## Persisting data
+
+### Preload a repository
+
+The GraphDB image is configured to store its data to `/opt/graphdb/home`. Also, the default 
+[server import](https://graphdb.ontotext.com/documentation/10.8/loading-data-using-the-workbench.html#importing-server-files) directory
+is `$HOME/graphdb-import`, but this could be changed using the `graphdb.workbench.importDirectory` configuration 
+property.
+
+To map directories from the host use:
+```shell
+docker container run -it -p 7200:7200 \
+  -v /host/path/for/graphdb/data:/opt/graphdb/home \
+  -v /host/path/for/graphdb/imports:/root/graphdb-import \
+  ontotext/graphdb:10.7.0
 ```
 
-this will build an image that you can use called ontotext/graphdb:10.7.1
-You can run the image now with
+To do the same but using volumes, we need to create the volumes first.
+```shell
+docker volume create graphdb-data
+docker volume create graphdb-import
 
-```bash
-docker run -d -p 7200:7200 ontotext/graphdb:10.7.1
+docker container run -it -p 7200:7200 \
+  -v graphdb-data:/opt/graphdb/home \
+  -v graphdb-import:/root/graphdb-import \
+  ontotext/graphdb:10.7.0
 ```
 
-Consult the docker hub documentation for more information.
+GraphDB configurations can be provided using the `graphdb.properties` file, using the `GDB_JAVA_OPTS` environment
+variable, or directly as command line arguments.
 
-#### Preload a repository using preload tool (optional)
+The `GDB_JAVA_OPTS` environment variable could also be used to configure GraphDB. Its value must be a list of space 
+separated key=value pairs prefixed by `-D`, following the java system properties syntax.
 
-You can preload some data using the 'preload' tool. This tool and other command line tools (https://graphdb.ontotext.com/documentation/10.7/command-line-tools.html) can be used only when GraphDB is stopped.
-In order to use one of them in docker, stop your current GraphDB instance.
-
-Mount a folder that you would like to use as a GraphDB home folder, using `-v` option, as well as the data that you would like to preload. As GraphDB's docker image endpoint by default is GraphDB's application it has to be overridden like so:
-
-```bash
-docker run -v ./graphdb-data:/opt/graphdb/home -v ./preload:/opt/graphdb-import --entrypoint /opt/graphdb/dist/bin/importrdf ontotext/graphdb:10.7.1 -Dgraphdb.home=/opt/graphdb/home preload --force --recursive -q /tmp -c /opt/graphdb-import/graphdb-repo.ttl /opt/graphdb-import/import
+```shell
+docker container run -it -p 7200:7200 \
+  -e GDB_JAVA_OPTS="-Dgraphdb.workbench.importDirectory=/var/graphdb/import" \
+  ontotext/graphdb:10.7.0
 ```
 
-This will run the preload tool, create a repository and import the data from `./preload/import`. After that, the same folder `./graphdb-data` can be mounted in a container and used as a GraphDB's home folder.
-
-### Using docker-compose 
-
-#### Preload a repository using preload tool (optional)
-
-Go to the `preload` folder to run the bulk load data when GraphDB is stopped.
-
-```bash
-cd preload
+```shell
+docker container run -it -p 7200:7200 \
+  ontotext/graphdb:10.7.0 -Dgraphdb.workbench.importDirectory=/var/graphdb/import -Dgraphdb.home=/opt/graphdb/home
 ```
 
-By default it will:
+## Setting a license file
 
-* Create or override a repository defined in the `graphdb-repo-config.ttl` file (can be changed manually in the file, default is `demo`)
-* Upload a test ntriple file from the `preload/import` subfolder.
+There are [several ways](https://graphdb.ontotext.com/documentation/10.8/set-up-your-license.html) to set a license 
+for GraphDB.
 
-> See the [GraphDB preload documentation](https://graphdb.ontotext.com/documentation/10.7/loading-data-using-importrdf.html) for more details.
+When running inside a container, the best way is using a 
+[file](https://graphdb.ontotext.com/documentation/10.8/set-up-your-license.html#setting-up-licenses-through-a-file).
 
-When running the preload docker-compose various parameters can be provided in the `preload/.env` file:
-
-```bash
-GRAPHDB_VERSION=10.7.1
-GRAPHDB_HEAP_SIZE=3g
-GRAPHDB_HOME=../graphdb-data
-REPOSITORY_CONFIG_FILE=./graphdb-repo.ttl
+Either mount the file as `graphdb.license` under the `conf/` directory
+```shell
+docker container run -it -p 7200:7200 \
+  -v /path/to/my-graphdb.license:/opt/graphdb/home/conf/graphdb.license \
+  ontotext/graphdb:10.7.0
+```
+or mount it to an arbitrary path and the GraphDB where it is
+```shell
+docker container run -it -p 7200:7200 \
+  -v /path/to/my-graphdb.license:/etc/graphdb/graphdb.license \
+  -e GDB_JAVA_OPTS="-Dgraphdb.license.file=/etc/graphdb/graphdb.license" \
+  ontotext/graphdb:10.7.0
 ```
 
-Build and run:
+# Using the `importrdf` tool
 
-```bash
-docker-compose build
-docker-compose up -d
+The [importrdf](https://graphdb.ontotext.com/documentation/10.8/cli-importrdf.html) command line tool can be used to 
+load big amounts of data. 
+
+Note that GraphDB should be stopped before using the tool. The tool also requires a valid license.
+
+To run the tool we need to override the image entrypoint, because by default, it starts GraphDB. We also need to map
+any files needed for the import.
+
+```shell
+docker container run -it -p 7200:7200 \
+  -v /path/to/my-graphdb.license:/opt/graphdb/home/conf/graphdb.license \
+  -v $PWD/preload:/graphdb-data-import \
+  --entrypoint /opt/graphdb/dist/bin/importrdf \
+  ontotext/graphdb:10.7.0 \
+  preload -Dgraphdb.home=/opt/graphdb/home -f -c /graphdb-data-import/repo-config.ttl /graphdb-data-import/data.nt 
 ```
 
-At this point the preload tool has preloaded the provided data in ``../graphdb-data``.
+Note that this example uses files from this repository, so make sure you run the command from the repository root 
+directory. Also, as mentioned above, we need to provide the `graphdb.home` configuration property, since we are
+overriding the default arguments used by GraphDB.
 
-Go back to the root of the git repository to start GraphDB:
-
-```bash
-cd ..
-```
-
-## Start GraphDB
-
-To start GraphDB run the following **from the root of the git repository**:
-
-```bash
-docker-compose up -d --build
-```
-
-> It will use the repo created by the preload in `graphdb-data/`
-
-> Feel free to add a `.env` file similar to the preload repository to define variables.
-
-
-# Issues
-
-You can report issues in the GitHub issue tracker or at graphdb-support at ontotext.com
-
-
-# Contributing
-
-You are invited to contribute new features, fixes, or updates, large or small;
-we are always thrilled to receive pull requests, and do our best to process
-them as fast as we can.
-
-Before you start to code, we recommend discussing your plans through a GitHub
-issue, especially for more ambitious contributions. This gives other
-contributors a chance to point you in the right direction, give you feedback on
-your design, and help you find out if someone else is working on the same
-thing.
+What this command does is:
+1. Mount the GraphDB license to `/opt/graphdb/home/conf/graphdb.license`
+2. Mount the `preload` directory from this repository to `/graphdb-data-import`
+3. Override the image entrypoint to the `importrdf` tool
+4. Configure the GraphDB home directory
+5. Finally, run `importrdf preload` command, which will
+   1. Create a repository using the `repo-config.ttl` file
+   2. Import the `test.nt` file in that repository
