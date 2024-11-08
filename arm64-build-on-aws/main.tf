@@ -146,7 +146,7 @@ resource "null_resource" "instance-provisioning" {
 resource "aws_security_group" "graphdb-security" {
   name = "graphdb-auto-tests-${random_id.instance_id.hex}"
   tags = {
-    Project = "GraphDB Docker"
+    Project = "GDB"
   }
 
   ingress {
