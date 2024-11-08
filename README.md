@@ -13,24 +13,12 @@ For example, if you want to build version `10.7.0`, you can run the following co
 make build VERSION="10.7.0"
 ```
 
-for example the most recent version as of this writing is 10.2.2 so run
-```bash
-make build-image VERSION=10.2.2
-```
-
-this will build an image that you can use called ontotext/graphdb:10.2.2
-You can run the image now with
-
-```bash
-docker run -d -p 7200:7200 ontotext/graphdb:10.2.2
-```
-
 ## Persisting data
 
 ### Preload a repository
 
 The GraphDB image is configured to store its data to `/opt/graphdb/home`. Also, the default 
-[server import](https://graphdb.ontotext.com/documentation/10.6/loading-data-using-the-workbench.html#importing-server-files) directory
+[server import](https://graphdb.ontotext.com/documentation/10.8/loading-data-using-the-workbench.html#importing-server-files) directory
 is `$HOME/graphdb-import`, but this could be changed using the `graphdb.workbench.importDirectory` configuration 
 property.
 
@@ -42,7 +30,7 @@ docker container run -it -p 7200:7200 \
   ontotext/graphdb:10.7.0
 ```
 
-To do the same but using volumes, we need to first create the volumes.
+To do the same but using volumes, we need to create the volumes first.
 ```shell
 docker volume create graphdb-data
 docker volume create graphdb-import
@@ -53,17 +41,8 @@ docker container run -it -p 7200:7200 \
   ontotext/graphdb:10.7.0
 ```
 
-> See the [GraphDB preload documentation](https://graphdb.ontotext.com/documentation/10.2/loading-data-using-importrdf.html) for more details.
-
 GraphDB configurations can be provided using the `graphdb.properties` file, using the `GDB_JAVA_OPTS` environment
-variable, or directly command line arguments.
-
-```bash
-GRAPHDB_VERSION=10.2.2
-GRAPHDB_HEAP_SIZE=3g
-GRAPHDB_HOME=../graphdb-data
-REPOSITORY_CONFIG_FILE=./graphdb-repo.ttl
-```
+variable, or directly as command line arguments.
 
 The `GDB_JAVA_OPTS` environment variable could also be used to configure GraphDB. Its value must be a list of space 
 separated key=value pairs prefixed by `-D`, following the java system properties syntax.
@@ -74,22 +53,18 @@ docker container run -it -p 7200:7200 \
   ontotext/graphdb:10.7.0
 ```
 
-> GraphDB data will go to `/data/graphdb`
-
 ```shell
 docker container run -it -p 7200:7200 \
   ontotext/graphdb:10.7.0 -Dgraphdb.workbench.importDirectory=/var/graphdb/import -Dgraphdb.home=/opt/graphdb/home
 ```
 
-### Start GraphDB
-
 ## Setting a license file
 
-There are [several ways](https://graphdb.ontotext.com/documentation/10.6/set-up-your-license.html) to set a license 
+There are [several ways](https://graphdb.ontotext.com/documentation/10.8/set-up-your-license.html) to set a license 
 for GraphDB.
 
 When running inside a container, the best way is using a 
-[file](https://graphdb.ontotext.com/documentation/10.6/set-up-your-license.html#setting-up-licenses-through-a-file).
+[file](https://graphdb.ontotext.com/documentation/10.8/set-up-your-license.html#setting-up-licenses-through-a-file).
 
 Either mount the file as `graphdb.license` under the `conf/` directory
 ```shell
@@ -107,7 +82,7 @@ docker container run -it -p 7200:7200 \
 
 # Using the `importrdf` tool
 
-The [importrdf](https://graphdb.ontotext.com/documentation/10.6/cli-importrdf.html) command line tool can be used to 
+The [importrdf](https://graphdb.ontotext.com/documentation/10.8/cli-importrdf.html) command line tool can be used to 
 load big amounts of data. 
 
 Note that GraphDB should be stopped before using the tool. The tool also requires a valid license.
