@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-noble AS builder
+FROM eclipse-temurin:11-jdk-noble AS builder
 
 ARG version
 ARG download_url="https://maven.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip"
@@ -12,7 +12,7 @@ RUN \
     unzip graphdb-${version}-dist.zip && \
     mv graphdb-${version} graphdb
 
-FROM eclipse-temurin:21-jdk-noble
+FROM eclipse-temurin:11-jdk-noble
 
 ARG graphdb_parent_dir=/opt/graphdb
 
