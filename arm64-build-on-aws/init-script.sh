@@ -15,5 +15,5 @@ cd /opt/temp-test-data
 git clone https://github.com/Ontotext-AD/graphdb-docker.git
 cd graphdb-docker
 sudo make -e VERSION=${GRAPHDB_VERSION} -e ARCH=arm64 build
-sudo docker login -u "${DOCKERHUB_USERNAME}" -p "${DOCKERHUB_PASSWORD}" docker.io
-sudo docker push ontotext/graphdb:${GRAPHDB_VERSION}-arm64
+sudo docker login -u "${MAVEN_USERNAME}" -p "${MAVEN_PASSWORD}" docker-registry.ontotext.com
+sudo docker push docker-registry.ontotext.com/graphdb:${GRAPHDB_VERSION}-arm64

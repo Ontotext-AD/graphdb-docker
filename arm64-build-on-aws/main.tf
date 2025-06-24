@@ -44,14 +44,14 @@ variable "graphdb_version_to_build" {
   description = "The GraphDB version for which the arm64 image will be built"
 }
 
-variable "dockerhub_username" {
+variable "maven_username" {
   type        = string
-  description = "The dockerhub username"
+  description = "The ontotext maven username"
 }
 
-variable "dockerhub_password" {
+variable "maven_password" {
   type        = string
-  description = "The dockerhub password"
+  description = "The ontotext maven password"
 }
 
 resource "tls_private_key" "generate_key" {
@@ -131,8 +131,8 @@ resource "null_resource" "instance-provisioning" {
     inline = [
       templatefile("${path.module}/init-script.sh", {
         GRAPHDB_VERSION    = var.graphdb_version_to_build,
-        DOCKERHUB_USERNAME = var.dockerhub_username,
-        DOCKERHUB_PASSWORD = var.dockerhub_password
+        MAVEN_USERNAME = var.maven_username,
+        MAVEN_PASSWORD = var.maven_password
     })]
     connection {
       type        = "ssh"

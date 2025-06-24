@@ -1,6 +1,6 @@
 VERSION =
 ARCH =
-TAG = ontotext/graphdb:${VERSION}
+TAG = docker-registry.ontotext.com/graphdb:${VERSION}
 
 check-env:
 ifndef VERSION
