@@ -1,13 +1,17 @@
 FROM eclipse-temurin:25-jdk-noble AS builder
 
 ARG version
-ARG download_url="https://maven.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip"
+ARG download_url="https://docker-registry.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip"
 ARG download_url_checksum="${download_url}.sha1"
+ARG disable_checksum_check
+
+ADD ${download_url} /graphdb-${version}-dist.zip
 
 RUN apt-get update && \
     apt-get install -y unzip curl && \
-    curl -fsSL "${download_url}" > /graphdb-${version}-dist.zip && \
-    bash -c 'sha1sum -c - <<<"$(curl -fsSL ${download_url_checksum})  graphdb-${version}-dist.zip"' && \
+    if [ -z "${disable_checksum_check}" ]; then \
+      printf '%s  %s\n' "$(curl -fsSL "${download_url_checksum}")" "graphdb-${version}-dist.zip" | sha1sum -c -; \
+    fi && \
     unzip graphdb-${version}-dist.zip && \
     mv /graphdb-${version} /graphdb
 
