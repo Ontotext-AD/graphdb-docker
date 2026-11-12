@@ -1,113 +1,104 @@
-# Building
+# GraphDB container image
 
-[Ontotext](https://www.ontotext.com/) provides prebuild images with every release of GraphDB. These images are available
-at [Docker Hub](https://hub.docker.com/r/ontotext/graphdb/).
+> [!IMPORTANT]
+> **GraphDB 12 and its container image introduce breaking changes.** The runtime, filesystem layout, default user, and container startup behavior differ from images for GraphDB 9–11. **Read the [migration guide](MIGRATION.md) before upgrading**, particularly if you use bind mounts, custom startup commands, or scripts that depend on the old paths.
 
-If you want to make changes to the image you can build it from this repository.
-To build the image you can use the provided [Makefile](./Makefile) or simply invoke the `docker image build` command
-directly. Note that there is a `version` build argument that must be provided. When using `make` this parameter will
-automatically be picked up from the `VERSION` variable.
+This repository builds a container image for GraphDB 12 and higher from the GraphDB distribution archive.
 
-For example, if you want to build version `10.7.0`, you can run the following command:
-```shell
-make build VERSION="10.7.0"
+## Build
+
+Supply the GraphDB distribution version as a build argument:
+
+```bash
+docker build --build-arg version=12.0.0 --tag ontotext/graphdb:12.0.0 .
 ```
 
-## Persisting data
+Replace `12.0.0` with the exact available GraphDB version.
 
-### Preload a repository
+## Run
 
-The GraphDB image is configured to store its data to `/opt/graphdb/home`. Also, the default 
-[server import](https://graphdb.ontotext.com/documentation/10.8/loading-data-using-the-workbench.html#importing-server-files) directory
-is `$HOME/graphdb-import`, but this could be changed using the `graphdb.workbench.importDirectory` configuration 
-property.
+For a quick, disposable instance:
 
-To map directories from the host use:
-```shell
-docker container run -it -p 7200:7200 \
-  -v /host/path/for/graphdb/data:/opt/graphdb/home \
-  -v /host/path/for/graphdb/imports:/root/graphdb-import \
-  ontotext/graphdb:10.7.0
+```bash
+docker run --rm --name graphdb \
+  -v /path/to/graphdb.license:/usr/share/graphdb/conf/graphdb.license \
+  -p 7200:7200 \
+  ontotext/graphdb:12.0.0
 ```
 
-To do the same but using volumes, we need to create the volumes first.
-```shell
-docker volume create graphdb-data
-docker volume create graphdb-import
+> [!NOTE]
+> You need to provide a valid GraphDB license in order to use it.
 
-docker container run -it -p 7200:7200 \
-  -v graphdb-data:/opt/graphdb/home \
-  -v graphdb-import:/root/graphdb-import \
-  ontotext/graphdb:10.7.0
+Open GraphDB Workbench at [http://localhost:7200](http://localhost:7200).
+
+For persistent data and logs, use named volumes.
+
+```bash
+docker run -d --name graphdb \
+  -p 7200:7200 \
+  -v /path/to/graphdb.license:/usr/share/graphdb/conf/graphdb.license \
+  -v graphdb-data:/var/lib/graphdb \
+  -v graphdb-logs:/var/log/graphdb \
+  ontotext/graphdb:12.0.0
 ```
 
-GraphDB configurations can be provided using the `graphdb.properties` file, using the `GDB_JAVA_OPTS` environment
-variable, or directly as command line arguments.
+## Filesystem layout
 
-The `GDB_JAVA_OPTS` environment variable could also be used to configure GraphDB. Its value must be a list of space 
-separated key=value pairs prefixed by `-D`, following the java system properties syntax.
+| Path | Description |
+| --- | --- |
+| `/usr/share/graphdb` | Installation directory |
+| `/usr/share/graphdb/conf` | Configuration files (graphdb.properties, logback.xml, etc.)|
+| `/var/lib/graphdb/data` | Persistent data (repositories, users, etc.) |
+| `/var/lib/graphdb/work` | Working files (file uploads, temporary files)|
+| `/var/lib/graphdb/imports` | Files for server imports |
+| `/var/log/graphdb` | Log files|
 
-```shell
-docker container run -it -p 7200:7200 \
-  -e GDB_JAVA_OPTS="-Dgraphdb.workbench.importDirectory=/var/graphdb/import" \
-  ontotext/graphdb:10.7.0
+> [!IMPORTANT]
+> The image runs with the `graphdb` (UID **10001**, with a matching primary group created during the build) user, 
+> not root. 
+> Mounted directories must be writable by this user. Docker-managed named volumes are generally the easiest option.
+> For bind mounts, set ownership and permissions on the host before starting the container.
+
+If mounting `/var/lib/graphdb/imports` separately, ensure that mount is readable.
+
+## Configuration
+
+The recommended way of configuring the GraphDB container is through [environment variables](https://graphdb.ontotext.com/documentation/11.5/directories-and-config-properties.html#configuring-graphdb-through-environment-variables).
+Alternatively, the `graphdb.properties`, `logback.xml`, or any other configuration files, can be mounted directly inside
+the configuration directory.
+
+```bash
+docker run --rm -p 7200:7200 \
+  -e graphdb__workbench__serverinfo=true \
+  -v /path/to/graphdb.properties:/usr/share/graphdb/conf/graphdb.properties:ro \
+  -v graphdb-data:/var/lib/graphdb \
+  ontotext/graphdb:12.0.0
 ```
 
-```shell
-docker container run -it -p 7200:7200 \
-  ontotext/graphdb:10.7.0 -Dgraphdb.workbench.importDirectory=/var/graphdb/import -Dgraphdb.home=/opt/graphdb/home
+## Startup and command overrides
+
+Unlike the previous images, starting GraphDB 12 there is **no Docker `ENTRYPOINT`** override. It uses:
+
+```dockerfile
+CMD ["/usr/share/graphdb/bin/graphdb"]
 ```
 
-## Setting a license file
+Consequently, arguments placed after the image name **replace the command** 
+rather than being appended to the GraphDB launcher. To pass launcher arguments, include the executable explicitly:
 
-There are [several ways](https://graphdb.ontotext.com/documentation/10.8/set-up-your-license.html) to set a license 
-for GraphDB.
-
-When running inside a container, the best way is using a 
-[file](https://graphdb.ontotext.com/documentation/10.8/set-up-your-license.html#setting-up-licenses-through-a-file).
-
-Either mount the file as `graphdb.license` under the `conf/` directory
-```shell
-docker container run -it -p 7200:7200 \
-  -v /path/to/my-graphdb.license:/opt/graphdb/home/conf/graphdb.license \
-  ontotext/graphdb:10.7.0
-```
-or mount it to an arbitrary path and the GraphDB where it is
-```shell
-docker container run -it -p 7200:7200 \
-  -v /path/to/my-graphdb.license:/etc/graphdb/graphdb.license \
-  -e GDB_JAVA_OPTS="-Dgraphdb.license.file=/etc/graphdb/graphdb.license" \
-  ontotext/graphdb:10.7.0
+```bash
+docker run --rm -p 7200:7200 ontotext/graphdb:12.0.0 \
+  /usr/share/graphdb/bin/graphdb -Dregister-plugins=com.ontotext.trree.plugin.js.JSPlugin
 ```
 
-# Using the `importrdf` tool
+## Importing trusted CA certificates
 
-The [importrdf](https://graphdb.ontotext.com/documentation/10.8/cli-importrdf.html) command line tool can be used to 
-load big amounts of data. 
+Custom CA certificates can be imported into the JVM truststore automatically at container startup.
 
-Note that GraphDB should be stopped before using the tool. The tool also requires a valid license.
+To enable this functionality:
+1. Set `USE_SYSTEM_CA_CERTS=1`
+2. Mount your certificates into `/certificates` inside the container
+3. Ensure certificates are in PEM format (.crt files)
 
-To run the tool we need to override the image entrypoint, because by default, it starts GraphDB. We also need to map
-any files needed for the import.
-
-```shell
-docker container run -it -p 7200:7200 \
-  -v /path/to/my-graphdb.license:/opt/graphdb/home/conf/graphdb.license \
-  -v $PWD/preload:/graphdb-data-import \
-  --entrypoint /opt/graphdb/dist/bin/importrdf \
-  ontotext/graphdb:10.7.0 \
-  preload -Dgraphdb.home=/opt/graphdb/home -f -c /graphdb-data-import/repo-config.ttl /graphdb-data-import/data.nt 
-```
-
-Note that this example uses files from this repository, so make sure you run the command from the repository root 
-directory. Also, as mentioned above, we need to provide the `graphdb.home` configuration property, since we are
-overriding the default arguments used by GraphDB.
-
-What this command does is:
-1. Mount the GraphDB license to `/opt/graphdb/home/conf/graphdb.license`
-2. Mount the `preload` directory from this repository to `/graphdb-data-import`
-3. Override the image entrypoint to the `importrdf` tool
-4. Configure the GraphDB home directory
-5. Finally, run `importrdf preload` command, which will
-   1. Create a repository using the `repo-config.ttl` file
-   2. Import the `test.nt` file in that repository
+This creates trust store, where all system-wide certificates are imported, including the ones provided under
+`/certificates`. Java is then configured to use that trust store by default.

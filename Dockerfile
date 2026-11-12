@@ -1,38 +1,45 @@
-FROM eclipse-temurin:21-jdk-noble AS builder
+FROM eclipse-temurin:25-jdk-noble AS builder
 
 ARG version
-ARG download_url="https://maven.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip"
-ARG download_url_checksum="${download_url}.md5"
+ARG download_url="https://docker-registry.ontotext.com/repository/owlim-releases/com/ontotext/graphdb/graphdb/${version}/graphdb-${version}-dist.zip"
+ARG download_url_checksum="${download_url}.sha1"
+ARG disable_checksum_check
 
-RUN \
-    apt-get update && \
-    apt-get install -u unzip && \
-    curl -fsSL "${download_url}" > graphdb-${version}-dist.zip && \
-    bash -c 'md5sum -c - <<<"$(curl -fsSL ${download_url_checksum})  graphdb-${version}-dist.zip"' && \
+ADD ${download_url} /graphdb-${version}-dist.zip
+
+RUN apt-get update && \
+    apt-get install -y unzip curl && \
+    if [ -z "${disable_checksum_check}" ]; then \
+      printf '%s  %s\n' "$(curl -fsSL "${download_url_checksum}")" "graphdb-${version}-dist.zip" | sha1sum -c -; \
+    fi && \
     unzip graphdb-${version}-dist.zip && \
-    mv graphdb-${version} graphdb
+    mv /graphdb-${version} /graphdb
 
-FROM eclipse-temurin:21-jdk-noble
+FROM eclipse-temurin:25-jdk-noble
 
-ARG graphdb_parent_dir=/opt/graphdb
+ENV graphdb__workbench__importDirectory="/var/lib/graphdb/imports" \
+    graphdb__home__data="/var/lib/graphdb/data" \
+    graphdb__home__work="/var/lib/graphdb/work" \
+    graphdb__home__logs="/var/log/graphdb"
 
-ENV GRAPHDB_HOME=${graphdb_parent_dir}/home
-ENV GRAPHDB_INSTALL_DIR=${graphdb_parent_dir}/dist
-ENV PATH=${GRAPHDB_INSTALL_DIR}/bin:$PATH
+ENV graphdb__workbench__serverinfo="false" \
+    graphdb__distribution="docker"
 
-COPY --from=builder graphdb/ ${GRAPHDB_INSTALL_DIR}/
+COPY --from=builder /graphdb /usr/share/graphdb
 
-WORKDIR /tmp
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      net-tools \
+      less \
+      curl && \
+    useradd --uid 10001 --user-group --no-create-home --shell /usr/sbin/nologin graphdb && \
+    mkdir -p /var/lib/graphdb /var/log/graphdb && \
+    chown graphdb:graphdb /var/lib/graphdb /var/log/graphdb
 
-RUN \
-    apt-get update && \
-    apt-get install -y net-tools less && \
-    mkdir -p ${GRAPHDB_HOME} && \
-    apt-get clean
+WORKDIR "/usr/share/graphdb"
 
-ENTRYPOINT ["/opt/graphdb/dist/bin/graphdb"]
+USER graphdb
 
-CMD ["-Dgraphdb.home=/opt/graphdb/home", "-Dgraphdb.distribution=docker"]
+CMD ["/usr/share/graphdb/bin/graphdb"]
 
-EXPOSE 7200
-EXPOSE 7300
+EXPOSE 7200 7300
