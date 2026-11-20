@@ -20,7 +20,8 @@ FROM eclipse-temurin:25-jdk-noble
 ENV graphdb__workbench__importDirectory="/var/lib/graphdb/imports" \
     graphdb__home__data="/var/lib/graphdb/data" \
     graphdb__home__work="/var/lib/graphdb/work" \
-    graphdb__home__logs="/var/log/graphdb"
+    graphdb__ontop__jdbc__path="/var/lib/graphdb/jdbc-driver" \
+    graphdb__home__logs="/var/log/graphdb" \
 
 ENV graphdb__workbench__serverinfo="false" \
     graphdb__distribution="docker"
@@ -33,8 +34,8 @@ RUN apt-get update && \
       less \
       curl && \
     useradd --uid 10001 --user-group --no-create-home --shell /usr/sbin/nologin graphdb && \
-    mkdir -p /var/lib/graphdb /var/log/graphdb && \
-    chown graphdb:graphdb /var/lib/graphdb /var/log/graphdb
+    mkdir -p /var/lib/graphdb/jdbc-driver /var/log/graphdb && \
+    chown -R graphdb:graphdb /var/lib/graphdb /var/log/graphdb
 
 WORKDIR "/usr/share/graphdb"
 

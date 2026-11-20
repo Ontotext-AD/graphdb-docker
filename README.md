@@ -44,14 +44,15 @@ docker run -d --name graphdb \
 
 ## Filesystem layout
 
-| Path | Description |
-| --- | --- |
-| `/usr/share/graphdb` | Installation directory |
-| `/usr/share/graphdb/conf` | Configuration files (graphdb.properties, logback.xml, etc.)|
-| `/var/lib/graphdb/data` | Persistent data (repositories, users, etc.) |
-| `/var/lib/graphdb/work` | Working files (file uploads, temporary files)|
-| `/var/lib/graphdb/imports` | Files for server imports |
-| `/var/log/graphdb` | Log files|
+| Path |Configuration| Description |
+| --- |---| --- |
+| `/usr/share/graphdb` | | Installation directory| 
+| `/usr/share/graphdb/conf` | | Configuration files (graphdb.properties, logback.xml, etc.)|
+| `/var/lib/graphdb/data` |`graphdb__home__data` | Persistent data (repositories, users, etc.) |
+| `/var/lib/graphdb/work` |`graphdb__home__work`| Working files (file uploads, temporary files)|
+| `/var/lib/graphdb/imports` |`graphdb__workbench__importDirectory` | Files for server imports |
+| `/var/lib/graphdb/jdbc-driver` |`graphdb__ontop__jdbc__path` | Location for JDBC driver jar files |
+| `/var/log/graphdb` |`graphdb__home__logs`| Log files|
 
 > [!IMPORTANT]
 > The image runs with the `graphdb` (UID **10001**, with a matching primary group created during the build) user, 

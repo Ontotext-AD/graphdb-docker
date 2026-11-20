@@ -21,6 +21,7 @@ This is described in the table bellow:
 | Data          | /opt/graphdb/home/data       | /var/lib/graphdb/data     |
 | Work           | /opt/graphdb/home/work       | /var/lib/graphdb/work     |
 | Server files import           | /root/graphdb-home       | /var/lib/graphdb/imports     |
+| JDBC driver jar files           | /opt/graphdb/dist/lib/jdbc       | /var/lib/graphdb/jdbc-driver     |
 | Logs           | /opt/graphdb/home/logs       | /var/log/graphdb     |
 
 ## Migrating data directories
@@ -42,6 +43,7 @@ These steps assume that the data volume used for graphdb is called `graphdb-data
     ```
     chmod -R a+r /path/to/graphdb-imports
     ```
+5. If using custom JDBC drivers, make sure the drivers are mounted at the correct location and are readable
    
 If using bind mounts, make sure the permissions on the host directories and files allow the `graphdb` user to read and 
 write to them.
